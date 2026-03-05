@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { StringValue } from "ms";
 
 const envSchema = z.object({
   NODE_ENV: z
@@ -15,8 +16,14 @@ const envSchema = z.object({
   JWT_ACCESS_SECRET: z.string().min(32),
   JWT_REFRESH_SECRET: z.string().min(32),
 
-  JWT_ACCESS_EXPIRES_IN: z.string().default("15m"),
-  JWT_REFRESH_EXPIRES_IN: z.string().default("7d"),
+  JWT_ACCESS_EXPIRES_IN: z
+    .string()
+    .default("15m")
+    .transform((val) => val as StringValue),
+  JWT_REFRESH_EXPIRES_IN: z
+    .string()
+    .default("7d")
+    .transform((val) => val as StringValue),
 
   BCRYPT_SALT_ROUNDS: z
     .string()
