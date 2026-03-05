@@ -2,7 +2,7 @@ import { app } from "./app.js";
 import { env } from "./config/env.js";
 import { prisma } from "./db/prisma.js";
 
-const startServer = async () => {
+export const startServer = async () => {
   try {
     await prisma.$connect();
     console.log("Database connected");
@@ -19,7 +19,7 @@ const startServer = async () => {
       });
     };
 
-    process.on("SIGNINT", shutdown);
+    process.on("SIGINT", shutdown);
     process.on("SIGTERM", shutdown);
   } catch (error) {
     console.error("Failed to start server:", error);
