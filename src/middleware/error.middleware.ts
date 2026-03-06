@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
-import { ZodError } from "zod";
+import { success, ZodError } from "zod";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { env } from "../config/env.js";
 
 export const errorMiddleware = (
@@ -19,6 +20,20 @@ export const errorMiddleware = (
         path: e.path.join("."),
         message: e.message,
       })),
+    });
+  }
+
+  if (err instanceof TokenExpiredError) {
+    return res.status(401).json({
+      success: false,
+      message: "Token has expired",
+    });
+  }
+
+  if (err instanceof JsonWebTokenError) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid token",
     });
   }
 
