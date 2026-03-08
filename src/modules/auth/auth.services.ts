@@ -73,7 +73,7 @@ export const loginUser = async ({ email, password }: LoginInput) => {
     throw new ApiError(401, "Invalid Credentials");
   }
 
-  const isPasswordValid = comparePassword(password, user.passwordHash);
+  const isPasswordValid = await comparePassword(password, user.passwordHash);
 
   if (!isPasswordValid) {
     throw new ApiError(401, "Invalid Credentials");
