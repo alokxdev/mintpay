@@ -4,9 +4,10 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import { env } from "./config/env.js";
-import { ok } from "node:assert";
 
-// import { errorMiddleware } form "./middleware/error.middleware.js"
+import routes from "./routes/index.js";
+
+import { errorMiddleware } from "./middleware/error.middleware.js";
 
 export const app = express();
 
@@ -29,10 +30,13 @@ app.get("/health", (_req, res) => {
   res.status(200).json({ status: "ok" });
 });
 
+app.use("/api", routes);
+
 app.use((_req, res) => {
   res.status(404).json({
+    success: false,
     message: "Route not found",
   });
 });
 
-// app.use(errorMiddleware);
+app.use(errorMiddleware);
