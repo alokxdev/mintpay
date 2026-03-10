@@ -1,4 +1,4 @@
-import { email, z } from "zod";
+import { z } from "zod";
 
 const passwordSchema = z
   .string()
@@ -24,7 +24,12 @@ export const registerSchema = z.object({
 
   lastName: z.string().trim().min(1, "Last name is required").max(50),
 
-  email: z.string().trim().max(255).pipe(z.email("Invalid email address")),
+  email: z
+    .string()
+    .trim()
+    .max(255)
+    .toLowerCase()
+    .pipe(z.email("Invalid email address")),
 
   password: passwordSchema,
 });
