@@ -29,3 +29,8 @@ export const updateUser = async (
     email: string;
   },
 ): Promise<User> => prisma.user.update({ where: { id }, data });
+
+export const deleteUser = async (id: string): Promise<User> =>
+  prisma.user.delete({
+    where: { id },
+  });
