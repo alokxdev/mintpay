@@ -4,9 +4,8 @@ import {
   signRefreshToken,
   verifyRefreshToken,
 } from "../../lib/jwt.js";
+import { createUser, findUserByEmail } from "../user/user.repository.js";
 import {
-  createUser,
-  findUserByEmail,
   findRefreshToken,
   revokeRefreshToken,
   saveRefreshToken,

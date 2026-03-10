@@ -38,5 +38,5 @@ export const deleteUserSchema = z.object({
     .min(1, "password is required to confirm account deletion"),
 });
 
-export type updateUserInput = z.infer<typeof updateUserSchema>;
-export type deleteUserInput = z.infer<typeof deleteUserSchema>;
+export type updateUserInput = z.input<typeof updateUserSchema>;
+export type deleteUserInput = z.input<typeof deleteUserSchema>;
