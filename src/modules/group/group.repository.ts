@@ -16,7 +16,7 @@ export const groupWithMembers = async (groupId: string) =>
 
 // List groups a user belongs to
 export const findUserGroups = async (userId: string) =>
-  prisma.group.findMany({ where: { members: { some: { id: userId } } } });
+  prisma.group.findMany({ where: { members: { some: { userId } } } });
 
 // Update Group
 export const updateGroup = async (groupId: string, data: { name: string }) =>
