@@ -5,9 +5,17 @@ import {
   CalculateEqualSplits,
 } from "../../utils/expense.js";
 import { requireGroupMember } from "../../utils/groupAuth.js";
-import type { CreateExpenseInput } from "./expense.schema.js";
+import type {
+  CreateExpenseInput,
+  UpdateExpenseInput,
+} from "./expense.schema.js";
 import { prisma } from "../../db/prisma.js";
-import { findExpenseById, listGroupExpenses } from "./expense.repository.js";
+import {
+  deleteExpense,
+  findExpenseById,
+  listGroupExpenses,
+  updateExpense,
+} from "./expense.repository.js";
 import { ApiError } from "../../utils/ApiError.js";
 
 // CREATE EXPENSE maa chua lo apni apni
@@ -69,9 +77,55 @@ export const getGroupExpenseService = async (
 
 export const getExpenseService = async (expenseId: string, userId: string) => {
   const expense = await findExpenseById(expenseId);
+
   if (!expense) {
     throw new ApiError(404, "Expense not found");
   }
+
   await requireGroupMember(expense.groupId, userId);
+
   return expense;
+};
+
+// UPDATE EXPENSE
+export const updateExpenseService = async (
+  expenseId: string,
+  userId: string,
+  data: UpdateExpenseInput,
+) => {
+  const expense = await findExpenseById(expenseId);
+
+  if (!expense) {
+    throw new ApiError(404, "Expense not found");
+  }
+
+  if (expense.paidById !== userId) {
+    throw new ApiError(403, "You can only edit your own expenses");
+  }
+
+  await requireGroupMember(expense.groupId, userId);
+
+  return updateExpense(expenseId, {
+    ...(data.description !== undefined && { description: data.description }),
+    ...(data.amount !== undefined && { amount: new Decimal(data.amount) }),
+  });
+};
+// DELETE EXPENSE
+export const deleteExpenseService = async (
+  expenseId: string,
+  userId: string,
+) => {
+  const expense = await findExpenseById(expenseId);
+
+  if (!expense) {
+    throw new ApiError(404, "Expense not found");
+  }
+
+  if (expense.paidById !== userId) {
+    throw new ApiError(403, "You can only delete your own expenses");
+  }
+
+  await requireGroupMember(expense.groupId, userId);
+
+  return deleteExpense(expenseId);
 };
