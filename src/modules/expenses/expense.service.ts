@@ -99,17 +99,17 @@ export const updateExpenseService = async (
     throw new ApiError(404, "Expense not found");
   }
 
+  await requireGroupMember(expense.groupId, userId);
+
   if (expense.paidById !== userId) {
     throw new ApiError(403, "You can only edit your own expenses");
   }
 
-  await requireGroupMember(expense.groupId, userId);
-
   return updateExpense(expenseId, {
-    ...(data.description !== undefined && { description: data.description }),
-    ...(data.amount !== undefined && { amount: new Decimal(data.amount) }),
+    description: data.description,
   });
 };
+
 // DELETE EXPENSE
 export const deleteExpenseService = async (
   expenseId: string,
