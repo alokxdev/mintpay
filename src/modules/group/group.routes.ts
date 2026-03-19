@@ -21,6 +21,14 @@ import {
   removeMemberController,
   listMembersController,
 } from "./group.controller.js";
+import {
+  createExpenseBodySchema,
+  createExpenseParamSchema,
+} from "../expenses/expense.schema.js";
+import {
+  createExpenseController,
+  getGroupExpensesController,
+} from "../expenses/expense.controller.js";
 
 const router = Router();
 
@@ -58,6 +66,21 @@ router.get(
   "/:groupId/members",
   validate({ params: groupParamSchema }),
   listMembersController,
+);
+
+router.post(
+  "/:groupId/expenses",
+  validate({
+    params: createExpenseParamSchema,
+    body: createExpenseBodySchema,
+  }),
+  createExpenseController,
+);
+
+router.get(
+  "/:groupId/expenses",
+  validate({ params: groupParamSchema }),
+  getGroupExpensesController,
 );
 
 router.delete(

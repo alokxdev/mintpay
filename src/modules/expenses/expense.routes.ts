@@ -24,31 +24,14 @@ const router = Router();
 
 router.use(authMiddleware);
 
-// Group Expenses
-router.post(
-  "/groups/:groupId/expenses",
-  validate({
-    params: createExpenseParamSchema,
-    body: createExpenseBodySchema,
-  }),
-  createExpenseController,
-);
-
 router.get(
-  "/groups/:groupId/expenses",
-  validate({ params: groupParamSchema }),
-  getGroupExpensesController,
-);
-
-// Single Expense
-router.get(
-  "/expenses/:expenseId",
+  "/:expenseId",
   validate({ params: expenseParamSchema }),
   getExpenseController,
 );
 
 router.patch(
-  "/expenses/:expenseId",
+  "/:expenseId",
   validate({
     params: updateExpenseParamSchema,
     body: updateExpenseBodySchema,
@@ -57,7 +40,7 @@ router.patch(
 );
 
 router.delete(
-  "/expenses/:expenseId",
+  "/:expenseId",
   validate({ params: expenseParamSchema }),
   deleteExpenseController,
 );
