@@ -1,3 +1,7 @@
+import type { Expense, ExpenseSplit } from "@prisma/client";
+
+type ExpenseWithSplits = Expense & { splits: ExpenseSplit[] };
+
 type BalanceMap = Map<string, number>;
 
 type Settlement = {
@@ -6,22 +10,19 @@ type Settlement = {
   amount: number;
 };
 
-export const buildBalanceMap = (expenses: any[]): BalanceMap => {
+export const buildBalanceMap = (expenses: ExpenseWithSplits[]): BalanceMap => {
   const balanceMap: BalanceMap = new Map();
 
   for (const expense of expenses) {
     const payerId = expense.paidById;
     const amount = Number(expense.amount);
 
-    // ensure payer exists
     if (!balanceMap.has(payerId)) {
       balanceMap.set(payerId, 0);
     }
 
-    // payer gets full amount
     balanceMap.set(payerId, balanceMap.get(payerId)! + amount);
 
-    // subtract splits
     for (const split of expense.splits) {
       const userId = split.userId;
       const splitAmount = Number(split.amountOwed);
@@ -38,8 +39,15 @@ export const buildBalanceMap = (expenses: any[]): BalanceMap => {
 };
 
 export const splitBalances = (balanceMap: BalanceMap) => {
-  const creditors: { userId: string; amount: number }[] = [];
-  const debtors: { userId: string; amount: number }[] = [];
+  const creditors: {
+    userId: string;
+    amount: number;
+  }[] = [];
+
+  const debtors: {
+    userId: string;
+    amount: number;
+  }[] = [];
 
   for (const [userId, balance] of balanceMap) {
     if (balance > 0) {
@@ -48,17 +56,21 @@ export const splitBalances = (balanceMap: BalanceMap) => {
       debtors.push({ userId, amount: -balance });
     }
   }
-
   return { creditors, debtors };
 };
 
 export const settleBalances = (
-  creditors: { userId: string; amount: number }[],
-  debtors: { userId: string; amount: number }[],
+  creditors: {
+    userId: string;
+    amount: number;
+  }[],
+  debtors: {
+    userId: string;
+    amount: number;
+  }[],
 ): Settlement[] => {
   const settlements: Settlement[] = [];
 
-  // sort descending
   creditors.sort((a, b) => b.amount - a.amount);
   debtors.sort((a, b) => b.amount - a.amount);
 
@@ -80,8 +92,8 @@ export const settleBalances = (
     debtor!.amount -= settleAmount;
     creditor!.amount -= settleAmount;
 
-    if (debtor!.amount === 0) i++;
-    if (creditor!.amount === 0) j++;
+    if (debtor!.amount < 0.01) i++;
+    if (creditor!.amount < 0.01) j++;
   }
 
   return settlements;

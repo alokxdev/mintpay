@@ -22,6 +22,17 @@ export const findExpenseById = async (expenseId: string) =>
     },
   });
 
+// FIND ALL EXPENSE WHERE USER IS PAYER OR PARTICIPANT
+export const findUserExpense = async (userId: string) =>
+  prisma.expense.findMany({
+    where: {
+      OR: [{ paidById: userId }, { splits: { some: { userId } } }],
+    },
+    include: {
+      splits: true,
+    },
+  });
+
 // LIST EXPENSE BY GROUP
 export const listGroupExpenses = async (groupId: string) =>
   prisma.expense.findMany({
