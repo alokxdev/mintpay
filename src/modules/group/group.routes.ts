@@ -26,6 +26,7 @@ import {
   createExpenseController,
   getGroupExpensesController,
 } from "../expenses/expense.controller.js";
+import { getGroupBalancesController } from "../settlement/settlement.controller.js";
 
 const router = Router();
 
@@ -51,6 +52,12 @@ router.delete(
   "/:groupId",
   validate({ params: groupParamSchema }),
   deleteGroupController,
+);
+
+router.get(
+  "/:groupId/balances",
+  validate({ params: groupParamSchema }),
+  getGroupBalancesController,
 );
 
 router.post(
