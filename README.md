@@ -1,4 +1,4 @@
-# Building
+# Cleave - A Group Expense Management System
 
 A REST API for shared expense management. Create groups, add members, log expenses, and track who owes whom.
 
